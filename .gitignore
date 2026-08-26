@@ -1,0 +1,9 @@
+# Linux port build output (meson/ninja)
+linux-port/build/
+
+# Visual Studio cache
+.vs/
+
+# editor droppings
+*.swp
+*~

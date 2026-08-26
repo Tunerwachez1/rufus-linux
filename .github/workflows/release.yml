@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y meson ninja-build libudev-dev pkg-config
+
+      # glibc on the 22.04 runner (2.35) becomes the minimum requirement:
+      # the shipped binary runs on Ubuntu >= 22.04, Debian >= 12,
+      # Fedora >= 36 and anything newer.
+      - name: Build (release)
+        run: |
+          meson setup build --buildtype=release
+          ninja -C build
+
+      - name: Unit tests
+        run: meson test -C build --print-errorlogs
+
+      - name: Package
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          DIR="rufus-cli-${TAG}-linux-x86_64"
+          mkdir -p "dist/${DIR}"
+          cp build/rufus-cli "dist/${DIR}/"
+          strip "dist/${DIR}/rufus-cli"
+          cp linux-port/README.md "dist/${DIR}/USAGE.txt"
+          tar -czf "dist/${DIR}.tar.gz" -C dist "${DIR}"
+          sha256sum "dist/${DIR}.tar.gz" > "dist/${DIR}.tar.gz.sha256"
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "rufus-cli ${GITHUB_REF_NAME}" \
+            --notes "Prebuilt \`rufus-cli\` for x86_64 Linux.
+
+          **Requirements:** glibc >= 2.35 (Ubuntu 22.04+/Debian 12+/Fedora 36+), systemd's \`libudev\` (present on any systemd distribution).
+
+          \`\`\`sh
+          tar xzf rufus-cli-*.tar.gz
+          ./rufus-cli-*/rufus-cli list
+          sudo ./rufus-cli-*/rufus-cli write image.iso /dev/sdX
+          \`\`\`
+
+          Writing to block devices requires root; see USAGE.txt inside the
+          archive for the full command reference." \
+            dist/*.tar.gz dist/*.tar.gz.sha256

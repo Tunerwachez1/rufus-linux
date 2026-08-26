@@ -13,6 +13,19 @@ Rufus: The Reliable USB Formatting Utility
 
 Rufus is a utility that helps format and create bootable USB flash drives.
 
+## Linux port (work in progress)
+
+This tree also carries a native Linux port of Rufus: a platform-independent
+core, a libudev-based HAL and a `rufus-cli` command line tool that can list
+devices, write raw/compressed images (DD-style) and run the Windows-style
+file-copy pipeline with automatic splitting of >4 GiB WIM files.
+
+* Usage and build instructions: [linux-port/README.md](linux-port/README.md)
+* Porting plan and status (Russian): [ПЛАН-ПОРТАЦИЯ-НА-LINUX.md](ПЛАН-ПОРТАЦИЯ-НА-LINUX.md)
+* Prebuilt `rufus-cli` binaries: see the [Releases](../../releases) page
+
+The original Windows/MinGW build is not affected by the port.
+
 Features
 --------
 

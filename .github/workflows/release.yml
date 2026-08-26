@@ -10,6 +10,9 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: linux-port
     steps:
       - uses: actions/checkout@v4
 
@@ -36,7 +39,7 @@ jobs:
           mkdir -p "dist/${DIR}"
           cp build/rufus-cli "dist/${DIR}/"
           strip "dist/${DIR}/rufus-cli"
-          cp linux-port/README.md "dist/${DIR}/USAGE.txt"
+          cp README.md "dist/${DIR}/USAGE.txt"
           tar -czf "dist/${DIR}.tar.gz" -C dist "${DIR}"
           sha256sum "dist/${DIR}.tar.gz" > "dist/${DIR}.tar.gz.sha256"
 

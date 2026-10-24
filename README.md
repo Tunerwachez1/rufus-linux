@@ -26,6 +26,13 @@ file-copy pipeline with automatic splitting of >4 GiB WIM files.
 
 The original Windows/MinGW build is not affected by the port.
 
+## License
+
+Rufus and this Linux port are distributed under the **GNU General Public
+License, version 3 (GPLv3)**. The full license text is available in
+[LICENSE.txt](LICENSE.txt). Third-party components retain their respective
+licenses and copyright notices.
+
 Features
 --------
 
